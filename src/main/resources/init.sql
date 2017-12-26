@@ -1,0 +1,1 @@
+CREATE TABLE students (id IDENTITY, name VARCHAR NOT NULL, id_group INT)

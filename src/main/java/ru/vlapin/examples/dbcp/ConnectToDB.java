@@ -3,10 +3,11 @@ package ru.vlapin.examples.dbcp;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.sql.*;
 
 @Log4j2
 public class ConnectToDB {
@@ -20,7 +21,7 @@ public class ConnectToDB {
 
             logInfo("Соединение установлено.");
 
-            st.executeUpdate("CREATE TABLE students (id IDENTITY, name VARCHAR NOT NULL, id_group INT)");
+            init(st);
 
             int countRows = st.executeUpdate(
                     "INSERT INTO students (name, id_group) VALUES ('Баба-Яга', 123456)");
@@ -32,6 +33,17 @@ public class ConnectToDB {
                             rs.getString("name"),
                             rs.getInt("id_group"));
             }
+        }
+    }
+
+    private static void init(Statement st) throws IOException, SQLException {
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(
+                        ConnectToDB.class.getResourceAsStream("init.sql"),
+                        StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null)
+                st.executeUpdate(line);
         }
     }
 
