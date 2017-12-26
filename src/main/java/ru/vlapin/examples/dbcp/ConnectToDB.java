@@ -15,12 +15,12 @@ public class ConnectToDB {
 
             System.out.println("Соединение установлено.");
 
-            st.executeUpdate("CREATE TABLE STUDENTS (id IDENTITY, NAME VARCHAR NOT NULL, id_group INT)");
+            st.executeUpdate("CREATE TABLE students (id IDENTITY, name VARCHAR NOT NULL, id_group INT)");
 
             int countRows = st.executeUpdate(
                     "INSERT INTO students (name, id_group) VALUES ('Баба-Яга', 123456)");
 
-            try (ResultSet rs = st.executeQuery("SELECT * FROM STUDENTS")) {
+            try (ResultSet rs = st.executeQuery("SELECT * FROM students")) {
                 while (rs.next()) {
                     System.out.println(rs.getInt(1) + " " + rs.getString(2) + " " + rs.getInt(3));
                 }
