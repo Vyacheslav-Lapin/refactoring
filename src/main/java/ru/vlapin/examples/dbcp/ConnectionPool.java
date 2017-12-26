@@ -43,7 +43,6 @@ public class ConnectionPool {
 
         try {
             Class.forName(driverName);
-            givenAwayConQueue = new ArrayBlockingQueue<>(poolSize);
             connectionQueue = new ArrayBlockingQueue<>(poolSize);
             for (int i = 0; i < poolSize; i++) {
                 val pooledConnection = new PooledConnection(
@@ -63,7 +62,6 @@ public class ConnectionPool {
 
     private void clearConnectionQueue() {
         try {
-            closeConnectionsQueue(givenAwayConQueue);
             closeConnectionsQueue(connectionQueue);
         } catch (SQLException e) {
             // logger.log(Level.ERROR, "Error closing the connection.", e);
@@ -74,7 +72,6 @@ public class ConnectionPool {
         Connection connection;
         try {
             connection = connectionQueue.take();
-            givenAwayConQueue.add(connection);
         } catch (InterruptedException e) {
             throw new ConnectionPoolException(
                     "Error connecting to the data source.", e);
@@ -144,9 +141,6 @@ public class ConnectionPool {
             }
             if (connection.isReadOnly()) {
                 connection.setReadOnly(false);
-            }
-            if (!givenAwayConQueue.remove(this)) {
-                throw new SQLException("Error deleting connection from the given away connections pool.");
             }
             if (!connectionQueue.offer(this)) {
                 throw new SQLException("Error allocating connection in the pool.");
