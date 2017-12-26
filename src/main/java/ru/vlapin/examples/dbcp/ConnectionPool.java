@@ -13,13 +13,11 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class ConnectionPool {
+
     private BlockingQueue<Connection> connectionQueue;
-    private BlockingQueue<Connection> givenAwayConQueue;
 
     private String driverName;
     private String url;
-    private String user;
-    private String password;
     private int poolSize;
 
     private Properties bundle = new Properties() {
@@ -33,20 +31,22 @@ public class ConnectionPool {
     }.load("./src/test/resources/db.properties");
 
     ConnectionPool() throws ConnectionPoolException {
-        driverName = bundle.getProperty(DBParameter.DB_DRIVER);
-        url = bundle.getProperty(DBParameter.DB_URL);
-        user = bundle.getProperty(DBParameter.DB_USER);
-        password = bundle.getProperty(DBParameter.DB_PASSWORD);
-        poolSize = Integer.parseInt(bundle.getProperty(DBParameter.DB_POLL_SIZE, "5"));
+        assert bundle.containsKey(DBParameter.DB_USER);
+        assert bundle.containsKey(DBParameter.DB_PASSWORD);
+        assert bundle.size() >= 4 && bundle.size() <= 5;
 
-        Locale.setDefault(Locale.ENGLISH);
+        driverName = (String) bundle.remove(DBParameter.DB_DRIVER);
+        url = (String) bundle.remove(DBParameter.DB_URL);
+
+        String size = (String) bundle.remove(DBParameter.DB_POLL_SIZE);
+        poolSize = size == null ? 5 : Integer.parseInt(size);
 
         try {
             Class.forName(driverName);
             connectionQueue = new ArrayBlockingQueue<>(poolSize);
             for (int i = 0; i < poolSize; i++) {
                 val pooledConnection = new PooledConnection(
-                        DriverManager.getConnection(url, user, password));
+                        DriverManager.getConnection(url, bundle));
                 connectionQueue.add(pooledConnection);
             }
         } catch (SQLException e) {
