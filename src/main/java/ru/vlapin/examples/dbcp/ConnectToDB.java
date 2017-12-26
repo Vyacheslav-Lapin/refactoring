@@ -2,6 +2,7 @@ package ru.vlapin.examples.dbcp;
 
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import lombok.val;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,22 +17,22 @@ public class ConnectToDB {
     public static void main(String... args) {
         Class.forName("org.h2.Driver");
 
-        try (Connection con = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
-             Statement st = con.createStatement()) {
+        try (val connection = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+             val statement = connection.createStatement()) {
 
             logInfo("Соединение установлено.");
 
-            init(st);
+            init(statement);
 
-            int countRows = st.executeUpdate(
+            statement.executeUpdate(
                     "INSERT INTO students (name, id_group) VALUES ('Баба-Яга', 123456)");
 
-            try (ResultSet rs = st.executeQuery("SELECT id, name, id_group FROM students")) {
-                while (rs.next())
+            try (val resultSet = statement.executeQuery("SELECT id, name, id_group FROM students")) {
+                while (resultSet.next())
                     System.out.printf("%d %s %d%n",
-                            rs.getInt("id"),
-                            rs.getString("name"),
-                            rs.getInt("id_group"));
+                            resultSet.getInt("id"),
+                            resultSet.getString("name"),
+                            resultSet.getInt("id_group"));
             }
         }
     }
