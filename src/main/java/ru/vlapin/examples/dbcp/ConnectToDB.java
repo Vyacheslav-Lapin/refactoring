@@ -1,9 +1,11 @@
 package ru.vlapin.examples.dbcp;
 
 import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
 
 import java.sql.*;
 
+@Log4j2
 public class ConnectToDB {
 
     @SneakyThrows
@@ -13,7 +15,7 @@ public class ConnectToDB {
         try (Connection con = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
              Statement st = con.createStatement()) {
 
-            System.out.println("Соединение установлено.");
+            logInfo("Соединение установлено.");
 
             st.executeUpdate("CREATE TABLE students (id IDENTITY, name VARCHAR NOT NULL, id_group INT)");
 
@@ -26,5 +28,10 @@ public class ConnectToDB {
                 }
             }
         }
+    }
+
+    private static void logInfo(String message) {
+        System.out.println(message);
+        log.info(message);
     }
 }
