@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -25,8 +26,13 @@ public class ConnectToDB {
 
         Class.forName("org.h2.Driver");
 
-        try (val connection = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
-             val statement = connection.createStatement()) {
+        getStudent(filePath, DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"));
+    }
+
+    static void getStudent(String filePath, Connection connection) throws SQLException, IOException {
+
+        try (Connection connection1 = connection;
+             val statement = connection1.createStatement()) {
 
             logInfo("Соединение установлено.");
 
@@ -61,5 +67,10 @@ public class ConnectToDB {
     private static void logInfo(String message) {
         System.out.println(message);
         log.info(message);
+    }
+
+    @SneakyThrows
+    public static void getStudent(Connection connection) {
+        getStudent(DEFAULT_ADDRESS, connection);
     }
 }

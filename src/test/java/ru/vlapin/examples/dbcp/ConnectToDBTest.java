@@ -16,7 +16,7 @@ class ConnectToDBTest {
     static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     @SneakyThrows
-    static String fromSystemOutPrint(Runnable runnable) {
+    public static String fromSystemOutPrint(Runnable runnable) {
 
         PrintStream realOut = System.out;
 
@@ -33,7 +33,7 @@ class ConnectToDBTest {
         }
     }
 
-    static String fromSystemOutPrintln(Runnable runnable) {
+    public static String fromSystemOutPrintln(Runnable runnable) {
         String s = fromSystemOutPrint(runnable);
         if (s.endsWith(LINE_SEPARATOR))
             s = s.substring(0, s.length() - LINE_SEPARATOR.length());

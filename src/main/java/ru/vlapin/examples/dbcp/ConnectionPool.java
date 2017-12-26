@@ -1,15 +1,13 @@
 package ru.vlapin.examples.dbcp;
 
 import lombok.experimental.Delegate;
+import lombok.val;
 
 import java.io.Closeable;
 import java.sql.*;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executor;
 
 public class ConnectionPool {
     private BlockingQueue<Connection> connectionQueue;
@@ -21,7 +19,7 @@ public class ConnectionPool {
     private String password;
     private int poolSize;
 
-    private ConnectionPool() {
+    ConnectionPool() {
         DBResourceManager dbResourseManager = DBResourceManager.getInstance();
         this.driverName = dbResourseManager.getValue(DBParameter.DB_DRIVER);
         this.url = dbResourseManager.getValue(DBParameter.DB_URL);
@@ -45,11 +43,8 @@ public class ConnectionPool {
             givenAwayConQueue = new ArrayBlockingQueue<Connection>(poolSize);
             connectionQueue = new ArrayBlockingQueue<Connection>(poolSize);
             for (int i = 0; i < poolSize; i++) {
-                PooledConnection pooledConnection;
-                try (Connection connection = DriverManager.getConnection(url, user, password)) {
-                    pooledConnection = new PooledConnection(
-                            connection);
-                }
+                val pooledConnection = new PooledConnection(
+                        DriverManager.getConnection(url, user, password));
                 connectionQueue.add(pooledConnection);
             }
         } catch (SQLException e) {
@@ -73,7 +68,7 @@ public class ConnectionPool {
     }
 
     public Connection takeConnection() throws ConnectionPoolException {
-        Connection connection = null;
+        Connection connection;
         try {
             connection = connectionQueue.take();
             givenAwayConQueue.add(connection);
@@ -85,26 +80,31 @@ public class ConnectionPool {
     }
 
     public void closeConnection(Connection con, Statement st, ResultSet rs) {
-        try {	con.close();
+        try {
+            con.close();
         } catch (SQLException e) {
             // logger.log(Level.ERROR, "Connection isn't return to the pool.");
         }
-        try {	rs.close();
+        try {
+            rs.close();
         } catch (SQLException e) {
             // logger.log(Level.ERROR, "ResultSet isn't closed.");
         }
-        try {	st.close();
+        try {
+            st.close();
         } catch (SQLException e) {
             // logger.log(Level.ERROR, "Statement isn't closed.");
         }
     }
 
     public void closeConnection(Connection con, Statement st) {
-        try {	con.close();
+        try {
+            con.close();
         } catch (SQLException e) {
             // logger.log(Level.ERROR, "Connection isn't return to the pool.");
         }
-        try {	st.close();
+        try {
+            st.close();
         } catch (SQLException e) {
             // logger.log(Level.ERROR, "Statement isn't closed.");
         }
