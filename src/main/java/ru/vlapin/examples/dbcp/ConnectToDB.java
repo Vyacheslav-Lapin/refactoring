@@ -25,12 +25,12 @@ public class ConnectToDB {
             int countRows = st.executeUpdate(
                     "INSERT INTO students (name, id_group) VALUES ('Баба-Яга', 123456)");
 
-            try (ResultSet rs = st.executeQuery("SELECT * FROM students")) {
+            try (ResultSet rs = st.executeQuery("SELECT id, name, id_group FROM students")) {
                 while (rs.next())
                     System.out.printf("%d %s %d%n",
-                            rs.getInt(1),
-                            rs.getString(2),
-                            rs.getInt(3));
+                            rs.getInt("id"),
+                            rs.getString("name"),
+                            rs.getInt("id_group"));
             }
         }
     }
