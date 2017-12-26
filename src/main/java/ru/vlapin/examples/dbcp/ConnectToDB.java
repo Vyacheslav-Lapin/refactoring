@@ -9,12 +9,11 @@ public class ConnectToDB {
     @SneakyThrows
     public static void main(String... args) {
         Class.forName("org.h2.Driver");
-        Connection con = null;
+
         Statement st = null;
         ResultSet rs = null;
-        try {
-            con = DriverManager
-                    .getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+        try (Connection con = DriverManager
+                .getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")) {
 
             System.out.println("Соединение установлено.");
 
@@ -32,7 +31,6 @@ public class ConnectToDB {
         } finally {
                 if (rs != null ){ rs.close(); }
                 if (st != null) { st.close(); }
-                if (con != null) { con.close(); }
         }
     }
 }
