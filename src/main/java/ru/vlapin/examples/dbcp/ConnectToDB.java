@@ -10,14 +10,11 @@ public class ConnectToDB {
     public static void main(String... args) {
         Class.forName("org.h2.Driver");
 
-        Statement st = null;
         ResultSet rs = null;
-        try (Connection con = DriverManager
-                .getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")) {
+        try (Connection con = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+             Statement st = con.createStatement()) {
 
             System.out.println("Соединение установлено.");
-
-            st = con.createStatement();
 
             st.executeUpdate("CREATE TABLE STUDENTS (id IDENTITY, NAME VARCHAR NOT NULL, id_group INT)");
 
@@ -30,7 +27,6 @@ public class ConnectToDB {
             }
         } finally {
                 if (rs != null ){ rs.close(); }
-                if (st != null) { st.close(); }
         }
     }
 }
