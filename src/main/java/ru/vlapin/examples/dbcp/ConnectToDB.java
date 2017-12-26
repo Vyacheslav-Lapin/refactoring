@@ -9,7 +9,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.sql.*;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 @Log4j2
 public class ConnectToDB {
@@ -35,10 +37,11 @@ public class ConnectToDB {
 
             try (val resultSet = statement.executeQuery("SELECT id, name, id_group FROM students")) {
                 while (resultSet.next())
-                    System.out.printf("%d %s %d%n",
-                            resultSet.getInt("id"),
-                            resultSet.getString("name"),
-                            resultSet.getInt("id_group"));
+                    System.out.println(
+                            String.join(" ",
+                                    String.valueOf(resultSet.getInt("id")),
+                                    resultSet.getString("name"),
+                                    String.valueOf(resultSet.getInt("id_group"))));
             }
         }
     }
