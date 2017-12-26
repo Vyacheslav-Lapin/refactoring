@@ -19,7 +19,6 @@ class ConnectionPoolTest {
     @DisplayName("takeConnection method works correctly")
     void takeConnection() {
         val connectionPool = new ConnectionPool();
-        connectionPool.initPoolData();
         String s = fromSystemOutPrintln(() -> getStudent(connectionPool));
         assertThat(s, is(String.format(
                 "Соединение установлено.%s1 Баба-Яга 123456", LINE_SEPARATOR)));

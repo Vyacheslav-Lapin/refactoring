@@ -32,15 +32,13 @@ public class ConnectionPool {
         }
     }.load("./src/test/resources/db.properties");
 
-    ConnectionPool() {
+    ConnectionPool() throws ConnectionPoolException {
         driverName = bundle.getProperty(DBParameter.DB_DRIVER);
         url = bundle.getProperty(DBParameter.DB_URL);
         user = bundle.getProperty(DBParameter.DB_USER);
         password = bundle.getProperty(DBParameter.DB_PASSWORD);
         poolSize = Integer.parseInt(bundle.getProperty(DBParameter.DB_POLL_SIZE, "5"));
-    }
 
-    public void initPoolData() throws ConnectionPoolException {
         Locale.setDefault(Locale.ENGLISH);
 
         try {
