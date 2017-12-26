@@ -1,11 +1,14 @@
 package ru.vlapin.examples.dbcp;
 
+import lombok.SneakyThrows;
 import lombok.experimental.Delegate;
 import lombok.val;
 
 import java.io.Closeable;
+import java.io.FileInputStream;
 import java.sql.*;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -19,20 +22,22 @@ public class ConnectionPool {
     private String password;
     private int poolSize;
 
-    ConnectionPool() {
-        DBResourceManager dbResourseManager = DBResourceManager.getInstance();
-        this.driverName = dbResourseManager.getValue(DBParameter.DB_DRIVER);
-        this.url = dbResourseManager.getValue(DBParameter.DB_URL);
-        this.user = dbResourseManager.getValue(DBParameter.DB_USER);
-
-        this.password = dbResourseManager.getValue(DBParameter.DB_PASSWORD);
-
-        try {
-            this.poolSize = Integer.parseInt(dbResourseManager
-                    .getValue(DBParameter.DB_POLL_SIZE));
-        } catch (NumberFormatException e) {
-            poolSize = 5;
+    private Properties bundle = new Properties() {
+        @SneakyThrows
+        Properties load(String address) {
+            try (FileInputStream fileInputStream = new FileInputStream(address)) {
+                load(fileInputStream);
+            }
+            return this;
         }
+    }.load("./src/test/resources/db.properties");
+
+    ConnectionPool() {
+        driverName = bundle.getProperty(DBParameter.DB_DRIVER);
+        url = bundle.getProperty(DBParameter.DB_URL);
+        user = bundle.getProperty(DBParameter.DB_USER);
+        password = bundle.getProperty(DBParameter.DB_PASSWORD);
+        poolSize = Integer.parseInt(bundle.getProperty(DBParameter.DB_POLL_SIZE, "5"));
     }
 
     public void initPoolData() throws ConnectionPoolException {
@@ -40,8 +45,8 @@ public class ConnectionPool {
 
         try {
             Class.forName(driverName);
-            givenAwayConQueue = new ArrayBlockingQueue<Connection>(poolSize);
-            connectionQueue = new ArrayBlockingQueue<Connection>(poolSize);
+            givenAwayConQueue = new ArrayBlockingQueue<>(poolSize);
+            connectionQueue = new ArrayBlockingQueue<>(poolSize);
             for (int i = 0; i < poolSize; i++) {
                 val pooledConnection = new PooledConnection(
                         DriverManager.getConnection(url, user, password));
