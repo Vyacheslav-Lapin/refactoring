@@ -4,11 +4,11 @@ version '1.0-SNAPSHOT'
 apply plugin: 'java'
 
 sourceCompatibility =
-        targetCompatibility = 9
+        targetCompatibility = 1.8
 
 allprojects {
     repositories {
-        flatDir { dirs './lib' } // for local libs
+//        flatDir { dirs './lib' } // for local libs
         mavenLocal()
         mavenCentral()
         // jcenter() // BinTray
@@ -46,7 +46,7 @@ dependencies {
             'com.github.Vyacheslav-Lapin.Hegel:hegel-properties:master-SNAPSHOT'
 
     //noinspection SpellCheckingInspection
-    compileOnly ':lombok-edge:', // 'org.projectlombok:lombok:+',
+    compileOnly /*':lombok-edge:',*/ 'org.projectlombok:lombok:+',
             'edu.washington.cs.types.checker:checker-framework:+'
 
     testCompile 'org.junit.jupiter:junit-jupiter-params:+',
