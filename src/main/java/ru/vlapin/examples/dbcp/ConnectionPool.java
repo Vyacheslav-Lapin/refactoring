@@ -16,10 +16,6 @@ public class ConnectionPool {
 
     private BlockingQueue<Connection> connectionQueue;
 
-    private String driverName;
-    private String url;
-    private int poolSize;
-
     private Properties bundle = new Properties() {
         @SneakyThrows
         Properties load(String address) {
@@ -30,16 +26,16 @@ public class ConnectionPool {
         }
     }.load("./src/test/resources/db.properties");
 
-    ConnectionPool() throws ConnectionPoolException {
+    ConnectionPool() {
         assert bundle.containsKey(DBParameter.DB_USER);
         assert bundle.containsKey(DBParameter.DB_PASSWORD);
         assert bundle.size() >= 4 && bundle.size() <= 5;
 
-        driverName = (String) bundle.remove(DBParameter.DB_DRIVER);
-        url = (String) bundle.remove(DBParameter.DB_URL);
+        String driverName = (String) bundle.remove(DBParameter.DB_DRIVER);
+        String url = (String) bundle.remove(DBParameter.DB_URL);
 
         String size = (String) bundle.remove(DBParameter.DB_POLL_SIZE);
-        poolSize = size == null ? 5 : Integer.parseInt(size);
+        int poolSize = size == null ? 5 : Integer.parseInt(size);
 
         try {
             Class.forName(driverName);
@@ -68,7 +64,10 @@ public class ConnectionPool {
         }
     }
 
-    public Connection takeConnection() throws ConnectionPoolException {
+    /**
+     * @throws ConnectionPoolException if Interrupted
+     */
+    public Connection takeConnection() {
         Connection connection;
         try {
             connection = connectionQueue.take();
