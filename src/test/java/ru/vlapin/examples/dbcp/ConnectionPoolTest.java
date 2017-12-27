@@ -6,6 +6,9 @@ import org.hamcrest.core.Is;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Connection;
+import java.util.function.Supplier;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,7 +28,7 @@ class ConnectionPoolTest {
     }
 
     @SneakyThrows
-    private void getStudent(ConnectionPool connectionPool){
-        ConnectToDB.getStudent(connectionPool.takeConnection());
+    private void getStudent(Supplier<Connection> connectionPool){
+        ConnectToDB.getStudent(connectionPool.get());
     }
 }
