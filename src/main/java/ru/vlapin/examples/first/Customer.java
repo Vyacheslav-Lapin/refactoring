@@ -1,32 +1,27 @@
 package ru.vlapin.examples.first;
 
-import java.util.Enumeration;
-import java.util.Vector;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@RequiredArgsConstructor
 public class Customer {
-    private String _name;
-    private Vector _rentals = new Vector();
-
-    public Customer(String name) {
-        this._name = name;
-    }
+    @Getter
+    private final String name;
+    private List<Rental> rentals = new ArrayList<>();
 
     public void addRental(Rental arg) {
-        _rentals.addElement(arg);
-    }
-
-    public String getName() {
-        return _name;
+        rentals.add(arg);
     }
 
     public String statement() {
         double totalAmount = 0;
         int frequentRenterPoints = 0;
-        Enumeration rentals = _rentals.elements();
         String result = "Учет аренды для " + getName() + "\n";
-        while (rentals.hasMoreElements()) {
+        for (Rental each : rentals) {
             double thisAmount = 0;
-            Rental each = (Rental) rentals.nextElement();
 
             //определить сумму для каждой строки
             switch (each.getMovie().getPriceCode()) {
