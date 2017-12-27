@@ -54,9 +54,9 @@ public class Customer {
         }
 
         //добавить нижний колонтитул
-        result += "Сумма задолженности составляет " + String.valueOf(totalAmount) + "\n";
+        result += "Сумма задолженности составляет " + totalAmount + "\n";
 
-        result += "Вы заработали " + String.valueOf(frequentRenterPoints) + " очков за активность";
+        result += "Вы заработали " + frequentRenterPoints + " очков за активность";
 
         return result;
     }
