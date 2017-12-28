@@ -21,24 +21,9 @@ public class Customer {
         int frequentRenterPoints = 0;
         String result = "Учет аренды для " + getName() + "\n";
         for (Rental each : rentals) {
-            double thisAmount = 0;
 
             //определить сумму для каждой строки
-            switch (each.getMovie().getPriceCode()) {
-                case Movie.REGULAR:
-                    thisAmount += 2;
-                    if (each.getDaysRented() > 2)
-                        thisAmount += (each.getDaysRented() - 2) * 1.5;
-                    break;
-                case Movie.NEW_RELEASE:
-                    thisAmount += each.getDaysRented() * 3;
-                    break;
-                case Movie.CHILDRENS:
-                    thisAmount += 1.5;
-                    if (each.getDaysRented() > 3)
-                        thisAmount += (each.getDaysRented() - 3) * 1.5;
-                    break;
-            }
+            double thisAmount = each.amountFor();
 
             // добавить очки для активного арендатора
             frequentRenterPoints++;
@@ -60,4 +45,5 @@ public class Customer {
 
         return result;
     }
+
 }
